@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for test-deploy-third on 2025-11-23T05:07:23Z
+# fly.toml app configuration file generated for deploy-duplicate on 2025-11-23T10:19:04Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'test-deploy-third'
+app = 'deploy-duplicate'
 primary_region = 'sin'
 
 [build]
