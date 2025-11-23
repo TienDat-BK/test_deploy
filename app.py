@@ -1,28 +1,41 @@
 import gradio as gr
-from textblob import TextBlob
+import numpy as np
+import time
 
-def analyze_sentiment(text):
-    blob = TextBlob(text)
-    polarity = blob.sentiment.polarity
-    if polarity > 0:
-        return "Positive 😃"
-    elif polarity < 0:
-        return "Negative 😞"
-    else:
-        return "Neutral 😐"
+def heavy_computation(n, repeat):
+    """
+    Tạo ma trận nxn, nhân ma trận repeat lần.
+    Trả về kết quả cuối cùng và thời gian thực thi.
+    """
+    n = int(n)
+    repeat = int(repeat)
+    start_time = time.time()
 
-# Tạo giao diện Gradio
-with gr.Blocks() as demo:
-    gr.Markdown("# 📝 Sentiment Analyzer Demo")
-    gr.Markdown("Nhập một câu và xem sentiment của nó.")
-    
-    with gr.Row():
-        text_input = gr.Textbox(label="Enter your text here", placeholder="Type something...")
-        output = gr.Label(label="Sentiment")
-    
-    text_input.submit(analyze_sentiment, inputs=text_input, outputs=output)
-    # Hoặc dùng nút bấm
-    btn = gr.Button("Analyze")
-    btn.click(analyze_sentiment, inputs=text_input, outputs=output)
+    # Tạo ma trận random
+    A = np.random.rand(n, n)
+    B = np.random.rand(n, n)
 
-demo.launch(server_name="0.0.0.0", server_port=7860)
+    result = A
+    for i in range(repeat):
+        result = np.dot(result, B)  # nhân ma trận nặng CPU
+
+    elapsed = time.time() - start_time
+    return f"Computation done in {elapsed:.2f} seconds", result
+
+# Gradio UI
+demo = gr.Interface(
+    fn=heavy_computation,
+    inputs=[
+        gr.Number(label="Matrix size (n x n)", value=200, precision=0),
+        gr.Number(label="Number of multiplications", value=5, precision=0)
+    ],
+    outputs=[
+        gr.Textbox(label="Result info"),
+        gr.Dataframe(label="Result matrix (showing small matrices only)")
+    ],
+    title="Heavy Computation Demo",
+    description="This app performs repeated matrix multiplications to simulate a CPU-heavy task."
+)
+
+if __name__ == "__main__":
+    demo.launch(server_name="0.0.0.0", server_port=7860)

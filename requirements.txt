@@ -1,2 +1,3 @@
 gradio
-textblob
+numpy
+time
